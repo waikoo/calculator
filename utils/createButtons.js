@@ -1,5 +1,5 @@
 const BUTTONS = {
-    OPERATOR: ['+', '-', '*', '/', '=' ],
+    OPERATOR: ['+', '-', '*', '/', '=', '.', '%'],
     DELETE: ['C', '⌫'],
     NUMBER_OF_NUMBERS: 10
 }
@@ -27,11 +27,12 @@ function getNodeArray(type, iconsArray) {
 function getButton(instanceType, iconsArray, i) { 
   const button = document.createElement('button');
 
-  button.className = `${instanceType}${i+1}` 
+  const isOperator = instanceType !== 'number'  
+  button.className = `${instanceType}${isOperator ? i+1 : i}` 
   button.dataset.role = instanceType 
-  button.dataset.id = i+1
+  button.dataset.id = isOperator ? i+1 : i
   button.textContent =
-    instanceType !== 'number' ? iconsArray[i] : i 
+    isOperator ? iconsArray[i] : i 
 
   return button;
 }
