@@ -6,8 +6,8 @@
 
 :root {
   --plus: #33fc6c;
-  --calculation: #B0E2B770;
-  --result: #E0FBE390;
+  --calculation: #E0FBE390;
+  --result: #B0E2B770;
   --overlay: #96FFA450;
   --btn-bg-light: #C3F6CA;
   --btn-bg-harsh: #33FC6C;
@@ -22,7 +22,7 @@ html {
 
 body {
   background: var(--btn-bg-operator);
-  color: black;
+  color: white;
   margin: 0;
   padding: 0;
   display: grid;
@@ -76,12 +76,12 @@ body {
 
 .calculation {
   color: var(--calculation);
-  font-size: 1.1rem;
+  font-size: 3rem;
 }
 
 .result {
   color: var(--result);
-  font-size: 4rem;
+  font-size: 1.8rem;
 }
 
 .screen > img {
@@ -98,7 +98,7 @@ body {
   margin: 0 auto;
 }
 
-.buttons-inner {
+.button-container {
   background-color: var(--overlay);
   border-radius: 10px;
   display: grid;
@@ -111,7 +111,7 @@ body {
   padding: 0.6rem;
 }
 
-.buttons-inner button {
+.button-container button {
   border-radius: 5px;
   border: none;
   font-family: var(--fs);

@@ -12,19 +12,19 @@ export function attachButtonsToDOM(buttonsEl) {
   )
 }
 
-function getNodeArray(type, iconsArray) {
+function getNodeArray(type, onKeydownArr) {
   let nodeArray = [];
-  const length = iconsArray ? iconsArray.length : BUTTONS.NUMBER_OF_NUMBERS
+  const length = onKeydownArr ? onKeydownArr.length : BUTTONS.NUMBER_OF_NUMBERS
   for (let i = 0; i < length; i++) {
     nodeArray = [
       ...nodeArray, 
-      getButton(type, iconsArray, i)
+      getButton(type, onKeydownArr, i)
     ];
   }
   return nodeArray
 }
 
-function getButton(instanceType, iconsArray, i) { 
+function getButton(instanceType, onKeydownArr, i) { 
   const button = document.createElement('button');
 
   const isOperator = instanceType !== 'number'  
@@ -32,7 +32,8 @@ function getButton(instanceType, iconsArray, i) {
   button.dataset.role = instanceType 
   button.dataset.id = isOperator ? i+1 : i
   button.textContent =
-    isOperator ? iconsArray[i] : i 
+    isOperator ? onKeydownArr[i] : i 
+  button.dataset.onkeydown = isOperator ? onKeydownArr[i] : i
 
   return button;
 }
