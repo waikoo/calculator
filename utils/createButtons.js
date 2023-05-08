@@ -1,14 +1,14 @@
 const BUTTONS = {
-    OPERATOR: ['+', '-', '*', '/', '=', '.', '%'],
-    DELETE: ['C', '⌫'],
-    NUMBER_OF_NUMBERS: 10
+  OPERATOR: ['+', '-', '*', '/', '=', '.', '%'],
+  DELETE: ['C', 'delchar'],
+  NUMBER_OF_NUMBERS: 10
 }
 
 export function attachButtonsToDOM(buttonsEl) {
   buttonsEl.append(
-   ...getNodeArray('number'),
-   ...getNodeArray('operator', BUTTONS.OPERATOR),
-   ...getNodeArray('delete', BUTTONS.DELETE)
+    ...getNodeArray('number'),
+    ...getNodeArray('operator', BUTTONS.OPERATOR),
+    ...getNodeArray('delete', BUTTONS.DELETE)
   )
 }
 
@@ -28,12 +28,77 @@ function getButton(instanceType, onKeydownArr, i) {
   const button = document.createElement('button');
 
   const isOperator = instanceType !== 'number'  
-  button.className = `${instanceType}${isOperator ? i+1 : i}` 
-  button.dataset.role = instanceType 
-  button.dataset.id = isOperator ? i+1 : i
-  button.textContent =
-    isOperator ? onKeydownArr[i] : i 
-  button.dataset.onkeydown = isOperator ? onKeydownArr[i] : i
+  const id = isOperator ? i+1 : i
+
+  button.className = `${instanceType}${id}` 
+  button.dataset.role = instanceType
+  button.dataset.id = id
+  button.dataset.operator = isOperator ? onKeydownArr[i] : i
+  button.dataset.symbol = getSymbol(isOperator, onKeydownArr, i)
+  button.textContent = getTextContent(isOperator, onKeydownArr, i)
 
   return button;
+}
+
+function getTextContent(isOperator, onKeydownArr, i) {
+  if (!isOperator) return i
+  if (isOperator) {
+    switch (onKeydownArr[i]) {
+      case 'C':
+      case '.':
+        return onKeydownArr[i]
+
+      case '+':
+      case '-':
+      case '*':
+      case '/':
+      case '=':
+      case '%':
+      case 'delchar':
+        return ''
+
+      default:
+        throw new Error(`unforeseen case: ${onKeydownArr[i]}`);
+    }
+  }
+}
+
+function getSymbol(isOperator, onKeydownArr, i) {
+  if (!isOperator) return i
+  if (isOperator) {
+    switch (onKeydownArr[i]) {
+      case 'C':
+      case '.':
+      case '+':
+      case '-':
+      case '=':
+        return onKeydownArr[i]
+
+      case '*':
+      case '/':
+      case '%':
+        return getSymbolMini(onKeydownArr[i])
+
+      case 'delchar':
+      case 'C':
+        return ''
+
+      default:
+        throw new Error(`unforeseen case: ${onKeydownArr[i]}`);
+    }
+  }
+}
+
+export function getSymbolMini(value) {
+  if (!value) return 
+  switch (value) {
+    case '*':
+      return '×'
+    case '/':
+      return '÷'
+    case '%':
+      return '﹪'
+    default:
+      throw new Error(`Unknown value: ${value}`);
+  }
 }

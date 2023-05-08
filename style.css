@@ -6,12 +6,13 @@
 
 :root {
   --plus: #33fc6c;
-  --calculation: #E0FBE390;
-  --result: #B0E2B770;
+  --calculation: #E0FBE3;
+  --result: #B0E2B7;
   --overlay: #96FFA450;
   --btn-bg-light: #C3F6CA;
   --btn-bg-harsh: #33FC6C;
   --btn-bg-operator: #8641ec;
+  --icon-operator: #C8FFCF;
   --btn-txt: #086716;
   --ff: 'Plus Jakarta Sans', sans-serif;
 }
@@ -71,12 +72,13 @@ body {
   padding: 1rem;
   display: grid;
   justify-items: flex-end;
-  
+  overflow: hidden;
 }
 
 .calculation {
   color: var(--calculation);
   font-size: 3rem;
+  overflow: hidden;
 }
 
 .result {
@@ -147,16 +149,27 @@ button[data-role="number"] {
 }
 
 .operator7 {
+  background-image: url("./img/percent.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
   grid-row: 1/2;
   grid-column: 2/3;
 }
 
 .delete2 {
+  background-image: url("./img/delchar.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50%;
   grid-row: 1/2;
   grid-column: 3/4;
 }
 
 .operator4 {
+  background-image: url("./img/divide.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 27%;
   grid-row: 1/2;
   grid-column: 4/5;
 }
@@ -177,6 +190,10 @@ button[data-role="number"] {
 }
 
 .operator3 {
+  background-image: url("./img/szorzas.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 24%;
   grid-row: 2;
   grid-column: 4/5;
 }
@@ -199,6 +216,18 @@ button[data-role="number"] {
 .operator2 {
   grid-row: 3;
   grid-column: 4/5;
+  position: relative;
+}
+.operator2::after {
+  content: '';
+  width: 20px;
+  height: 4px;
+  background-color: var(--icon-operator);
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  border-radius: 2px;
 }
 
 .number0 {
@@ -216,6 +245,47 @@ button[data-role="number"] {
   grid-column: 3/4;
 }
 
+.operator1, .operator5 {
+  position: relative;
+}
 
+.operator1::before, .operator1::after, .operator5::before, .operator5::after {
+  content: '';
+  width: 20px;
+  height: 4px;
+  position: absolute;
+}
 
+.operator5::before {
+  margin-bottom: 10px;
+  top: 25px;
+}
+
+.operator5::after {
+  margin-top: 10px;
+  bottom: 25px;
+}
+
+.operator5::before, .operator5::after{
+  left: 50%;
+  transform: translate(-50%);
+  border-radius: 2px;
+  background-color: var(--icon-operator);
+}
+
+.operator1::before, .operator1::after {
+  background-color: var(--btn-bg-operator);
+  /* width: 25px; */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+}
+.operator1::before {
+  transform: rotate(90deg);
+  left: 36%;
+}
+.operator1::after {
+  top: 52.5%;
+}
 

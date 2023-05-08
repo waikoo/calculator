@@ -1,75 +1,95 @@
+import { getSymbolMini } from "./createButtons.js"
+
 export function handleOnKeydown(e, state, elements) {
-  let value = e.target.dataset.onkeydown
-  const role = e.target.dataset.role
-
-  separateNumbersFromOperators(value, role, state)
-  updateUI(value, role, state, elements)
-}
-
-function separateNumbersFromOperators(value, role, state) {
-  let valueArr = state.keyDownArray
-  const addNewValue = () => state.keyDownArray = [...state.keyDownArray, value]
-  const itsANumber = () => role === 'number'
-  const itsAnOperator = () => role === 'operator'
-  const itsADelete = () => role === 'delete'
-
-  if (itsANumber()) {
-    if (state.keyDownArray.length === 0) state.keyDownArray[0] = value
-    else {
-      if (state.lastKeyRole === 'number') {
-        valueArr[valueArr.length-1] = `${valueArr.at(-1)}${value}`
-      } else {
-        valueArr.push(value)
-      }
-    }
-  } else if (itsAnOperator()) {
-    if (value === '=') return
-    state.lastKeyRole === 'operator' ? valueArr[valueArr.length-1] = value : addNewValue()
-  } else if (itsADelete()) {
-    addNewValue()
-  }
-
+  const { operator: value, role, symbol } = e.target.dataset
+  if (role === 'number') handleNumber(value, state, elements)
+  if (role === 'operator') handleOperator(value, symbol, state, elements)
+  if (role === 'delete') handleDelete(value, symbol, state, elements)
+  handleResult(state, elements)
   state.lastKeyRole = role
 }
 
-function updateUI(value, role, state, elements) {
-  updateCalculation(value, role, state, elements)
-  updateResult(value, role, state, elements)
-}
+function updateState(state) {
+  if (!state.calculationHistory) return
+  const currentCalc = state.calculationHistory[state.count]
+  if (!currentCalc) return
 
-function updateResult(value, role, state, elements) {
-  console.log('updateResult')
-  if (state.keyDownArray.length === 3 || value === '=') {
-    const result = getResult(state.keyDownArray)
-    elements.result.textContent = result 
-    state.keyDownArray = []
-    state.keyDownArray[0] = result
-    console.log(state.keyDownArray)
+  if (currentCalc.completed) {
+    state.count++
+    state.pushNewCalculationObject(state.lastResult)
   }
 }
 
-function updateCalculation(value, role, state, elements) {
-
-  if (role === 'number') { 
-    elements.calculation.textContent += value
-    state.isOperatorIn = false;
-  } else if (role === 'operator') {
-    if (value === '=') return
-    if (state.isOperatorIn) {
-      elements.calculation.textContent = 
-      elements.calculation.textContent.slice(0, -1) + value
-    } else {
-      elements.calculation.textContent += value
-    }
-    state.isOperatorIn = true
-  } 
-}
-
-function getResult(arr) {
-  let result = eval(arr.join(''))
-
-  // if (!Number.isInteger(result)) {
-  // }
+function handleResult(state, elements) {
+  if (!state.calculationHistory) return
+  const currentCalc = state.calculationHistory[state.count]
+  if (!currentCalc) return
   
-  return result
+  // calculate result on keydown
+  if (currentCalc.operand1 && currentCalc.operand2) {
+    state.setResult(currentCalc, elements)
+  }
 }
+
+function handleNumber(value, state, elements) {
+  const currentCalc = state.calculationHistory[state.count];
+
+  currentCalc
+    ? handleExistingNumber(currentCalc, state, value)
+    : state.pushNewCalculationObject(value);
+
+  state.calculationString += value;
+  elements.calculation.textContent = state.calculationString;
+}
+
+function handleExistingNumber(currentCalc, state, value) {
+  if (currentCalc.operator && currentCalc.operand1 && !currentCalc.operand2) {
+    if (!state.lastResult) state.operand++;
+  }
+  currentCalc['operand' + state.operand] += value
+}
+
+function handleOperator(value, symbol, state, elements) {
+  if (!state.calculationHistory) return
+  const currentCalc = state.calculationHistory[state.count]
+  const currentOp = value === symbol ? value : getSymbolMini(value)
+  const calcStr = state.calculationString
+
+  // always use the newest operator pressed
+  state.calculationString =
+    state.lastKeyRole === "operator"
+      ? calcStr.slice(0, -1) + currentOp
+      : calcStr + currentOp
+  elements.calculation.textContent = state.calculationString
+
+  // ensure a calculation to be completed only after a new one is started
+  if (state.lastKeyRole !== 'operator' && currentCalc.operand2) {
+    state.calculationHistory[state.count].completed = true
+    updateState(state)
+  }
+  state.calculationHistory[state.count].operator = value
+}
+
+
+function handleDelete(value, symbol, state, elements) {
+  let {keyDownArray, calculationString, result, lastKeyRole } = state
+
+  if (value === 'delchar' ) {
+    // state
+    let lastEl = valueArr[valueArr.length-1]
+    lastEl = lastEl.slice(0, -1)
+    // ui
+    calculationString = calcEl.textContent.slice(0, -1)
+    calcEl.textContent = calculationString
+  } else if (value === 'C') {
+    state.calculationString = ''
+    state.lastResult = ''
+    state.lastKeyRole = ''
+    state.count = 0
+    state.operand = 1
+    state.calculationHistory = []
+    elements.calculation.textContent = ''
+    elements.result.textContent = ''
+  }
+}
+
