@@ -33,7 +33,7 @@ function getButton(instanceType, onKeydownArr, i) {
   button.className = `${instanceType}${id}` 
   button.dataset.role = instanceType
   button.dataset.id = id
-  button.dataset.operator = isOperator ? onKeydownArr[i] : i
+  button.dataset.key = isOperator ? onKeydownArr[i] : i
   button.dataset.symbol = getSymbol(isOperator, onKeydownArr, i)
   button.textContent = getTextContent(isOperator, onKeydownArr, i)
 
@@ -77,7 +77,7 @@ function getSymbol(isOperator, onKeydownArr, i) {
       case '*':
       case '/':
       case '%':
-        return getSymbolMini(onKeydownArr[i])
+        return getMatchedOperator(onKeydownArr[i])
 
       case 'delchar':
       case 'C':
@@ -89,16 +89,19 @@ function getSymbol(isOperator, onKeydownArr, i) {
   }
 }
 
-export function getSymbolMini(value) {
+export function getMatchedOperator(value) {
   if (!value) return 
-  switch (value) {
-    case '*':
-      return '×'
-    case '/':
-      return '÷'
-    case '%':
-      return '﹪'
-    default:
-      throw new Error(`Unknown value: ${value}`);
-  }
+
+  const symbols = {
+    '*': '×',
+    '×': '*',
+    '/': '÷',
+    '÷': '/',
+    '%': '﹪',
+    '﹪': '%'
+  };
+
+  if (value in symbols) return symbols[value]
+
+  else throw new Error(`unknown value: ${value}`);
 }
